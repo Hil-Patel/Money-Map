@@ -1,0 +1,10 @@
+.login-form{
+    height: 93vh;
+}
+.log-detail{
+    display: flex;
+    align-items: center;
+}
+.active>div{
+    color: blue;
+}
