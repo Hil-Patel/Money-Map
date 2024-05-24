@@ -9,7 +9,7 @@ const Navbar = () => {
     const loggedStatus=useSelector((state)=>state.log.status)
   return (
     <>
-      <nav className=" border-gray-200 bg-blue-200 dark:bg-gray-800 dark:border-gray-700">
+      <nav className=" border-gray-200 bg-blue-200 ">
         <div className=" ml-10 flex flex-wrap items-center justify-between mx-auto p-4">
           <a
             href="#"
@@ -20,7 +20,7 @@ const Navbar = () => {
               className="h-8"
               alt="money map Logo"
             />
-            <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
+            <span className="self-center text-2xl font-semibold whitespace-nowrap ">
               Money Map
             </span>
           </a>
