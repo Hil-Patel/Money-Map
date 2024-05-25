@@ -6,7 +6,7 @@ import { useFormik } from "formik";
 import { LoginSchema } from "../schema/Login";
 import { NavLink ,useNavigate} from "react-router-dom";
 import { useSelector ,useDispatch} from "react-redux";
-import { loggedIn } from "../feature/LoginSlice";
+import { loggedIn ,loggedOut} from "../feature/LoginSlice";
 import {UserloggedIn} from "../feature/UserSlice"
 import { setTransaction } from "../feature/TransactionSlice";
 import { setAmount } from "../feature/WalletSlice";
@@ -36,6 +36,7 @@ const LoginForm = () => {
                   localStorage.setItem(`${values.username}Transaction`,JSON.stringify({transactions:[],income:[],expense:[]}))
                   localStorage.setItem(`${values.username}Wallet`,JSON.stringify(0));
                 }
+                localStorage.setItem("logStatus","true")
                 dispatch(loggedIn());
                 navigate("/home")
             }
@@ -47,6 +48,9 @@ const LoginForm = () => {
       useEffect(()=>{
         if(isLogin){
             navigate("/home")
+        }
+        if(!localStorage.getItem("logStatus")){
+          localStorage.setItem("logStatus","false")
         }
       })
   return (

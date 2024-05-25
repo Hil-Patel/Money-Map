@@ -8,3 +8,39 @@
 .active>div{
     color: blue;
 }
+.Home-main{
+    display: flex;  
+    height: 93vh;
+    justify-content: space-around;
+    align-items: center;
+}
+.income{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    height: 80vh;
+    width: 40%;
+}
+.income>p{
+    text-align: center;
+}
+.expense{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    height: 80vh;
+    width: 40%;
+}
+.expense>p{
+    text-align: center;
+}
+.pop-up{
+    position: fixed;
+    height: 50vh;
+    width: 30%;
+    background-color: rgb(250, 235, 215);
+    top: 25%;
+    left: 36%;
+}

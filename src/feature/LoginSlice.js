@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const LoginStatus = {
-  status:false,
+  status:JSON.parse(localStorage.getItem("logStatus")),
 }
 
 export const LoginSlice = createSlice({

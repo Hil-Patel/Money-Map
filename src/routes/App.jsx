@@ -5,6 +5,7 @@ import '../assets/css/style.css'
 import { createBrowserRouter,RouterProvider } from 'react-router-dom'
 import Login from '../pages/Login'
 import SignUp from '../pages/SignUp'
+import Home from '../pages/Home'
 
 function App() {
   const router=createBrowserRouter([
@@ -22,7 +23,7 @@ function App() {
     },
     {
       path:'/home',
-      element:<h1>home</h1>
+      element:<Home/>
     }
 
   ])
