@@ -7,6 +7,9 @@ import { LoginSchema } from "../schema/Login";
 import { NavLink ,useNavigate} from "react-router-dom";
 import { useSelector ,useDispatch} from "react-redux";
 import { loggedIn } from "../feature/LoginSlice";
+import {UserloggedIn} from "../feature/UserSlice"
+import { setTransaction } from "../feature/TransactionSlice";
+import { setAmount } from "../feature/WalletSlice";
 import CryptoJS from "crypto-js";
 
 
@@ -24,8 +27,16 @@ const LoginForm = () => {
         onSubmit: (values) => {
             const storedpassword=CryptoJS.AES.decrypt(JSON.parse(localStorage.getItem(values.username)).password,"secret!3#%@").toString(CryptoJS.enc.Utf8);
             if(storedpassword===values.password){
+                dispatch(UserloggedIn(values.username));
+                if(localStorage.getItem(`${values.username}Transaction`)){
+                  dispatch(setTransaction(JSON.parse(localStorage.getItem(`${values.username}Transaction`))));
+                  dispatch(setAmount(JSON.parse(localStorage.getItem(`${values.username}Wallet`))))
+                }
+                else{
+                  localStorage.setItem(`${values.username}Transaction`,JSON.stringify({transactions:[],income:[],expense:[]}))
+                  localStorage.setItem(`${values.username}Wallet`,JSON.stringify(0));
+                }
                 dispatch(loggedIn());
-                console.log(isLogin);
                 navigate("/home")
             }
             else{
@@ -37,7 +48,6 @@ const LoginForm = () => {
         if(isLogin){
             navigate("/home")
         }
-        console.log(isLogin)
       })
   return (
     <>
