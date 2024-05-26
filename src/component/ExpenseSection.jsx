@@ -1,10 +1,9 @@
-/* eslint-disable no-unused-vars */
-import React from "react";
-
-import Popup from "reactjs-popup";
-import { Chart as ChartJS, defaults } from "chart.js/auto";
+import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { Chart as ChartJS, defaults } from "chart.js/auto";
+import { useFormik } from "formik"; // Importing useFormik hook
+import {addExpense} from "../feature/TransactionSlice"
 
 defaults.plugins.title.display = true;
 defaults.plugins.title.align = "start";
@@ -13,13 +12,63 @@ defaults.plugins.title.color = "black";
 
 const ExpenseSection = () => {
   const expenseData = useSelector((state) => state.transaction.expense);
-  const handleClick=()=>{
-    // document.getElementById("authentication-modal").classList.toggle("hidden");
-    document.getElementById("authentication-modal").classList.add("block");
-  }
+  const username=useSelector((state)=>state.user.name);
+  const wallet=useSelector((state)=>state.Wallet.balance);
+  const transaction=useSelector((state)=>state.transaction)
+  const [showOtherInput, setShowOtherInput] = useState(false);
+  const dispatch=useDispatch();
+
+  const handleClick = () => {
+    document.getElementById("authentication-modal").classList.toggle("hidden");
+    document.getElementById("authentication-modal").classList.toggle("flex");
+  };
+
+  const handleReasonChange = (value) => {
+    setShowOtherInput(value === "Other");
+  };
+
+  const formik = useFormik({
+    initialValues: {
+      date: "",
+      amount: "",
+      reason: "",
+      otherReason: "",
+    },
+    onSubmit:(values)=>{
+      let payload={}
+      if (values.otherReason==="") {
+        payload={
+          action:"expense",
+          date: values.date,
+          amount: values.amount,
+          reason: values.reason
+        }
+      }
+      else{
+        payload={
+          action:"expense",
+          date: values.date,
+          amount: values.amount,
+          reason: values.otherReason
+        }
+      }
+      console.log(payload)
+      dispatch(addExpense(payload))
+    },
+  });
+
+  useEffect(()=>{
+    
+    localStorage.setItem(`${username}Transaction`,JSON.stringify(transaction))
+  },[transaction])
+  
+  useEffect(()=>{
+    localStorage.setItem(`${username}Wallet`,JSON.stringify(wallet))
+  },[wallet])
+
   return (
     <>
-      <div className="expense">
+      <div className="expense bg-blue-50 p-6 rounded-lg shadow-md">
         {expenseData.length > 0 ? (
           <Line
             data={{
@@ -35,145 +84,144 @@ const ExpenseSection = () => {
             }}
           />
         ) : (
-          <p>no data</p>
+          <p>No data</p>
         )}
-        {/* <Popup
-            trigger={
-              <button
-                type="button"
-                classNameName="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-              >
-                Add Expense
-              </button>
-            }
-            position="left center"
-          >
-            <div classNameName="pop-up">Popup content here !!</div>
-          </Popup> */}
 
         <button
           data-modal-target="authentication-modal"
           data-modal-toggle="authentication-modal"
-          className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4"
           type="button"
           onClick={handleClick}
         >
-          Toggle modal
+          Add Expense
         </button>
 
         <div
           id="authentication-modal"
           tabIndex="-1"
           aria-hidden="true"
-          className="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+          className="hidden fixed inset-0 z-50 overflow-y-auto overflow-x-hidden justify-center items-center bg-gray-900 bg-opacity-50"
         >
-          <div className="relative p-4 w-full max-w-md max-h-full">
-            <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
-              <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                  Sign in to our platform
-                </h3>
-                <button
-                  type="button"
-                  className="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                  data-modal-hide="authentication-modal"
+          <div className="relative bg-blue-100 p-4 pt-2 w-full max-w-md max-h-full rounded-lg shadow-lg">
+            <div className="flex items-center justify-between p-2 md:p-4 border-b rounded-t">
+              <h3 className="text-xl font-semibold text-gray-900">
+                Expense Form
+              </h3>
+              <button
+                type="button"
+                onClick={handleClick}
+                className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center"
+                data-modal-hide="authentication-modal"
+              >
+                <svg
+                  className="w-3 h-3"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 14 14"
                 >
-                  <svg
-                    className="w-3 h-3"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 14 14"
-                  >
-                    <path
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-                    />
-                  </svg>
-                  <span className="sr-only">Close modal</span>
-                </button>
+                  <path
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                  />
+                </svg>
+                <span className="sr-only">Close modal</span>
+              </button>
+            </div>
+
+            <form onSubmit={formik.handleSubmit} className="space-y-4">
+              <div>
+                <label
+                  htmlFor="date"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  Date
+                </label>
+                <input
+                  type="date"
+                  id="date"
+                  name="date"
+                  className="block w-full p-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
+                  onChange={formik.handleChange}
+                  value={formik.values.date}
+                />
               </div>
 
-              <div className="p-4 md:p-5">
-                <form className="space-y-4" action="#">
-                  <div>
-                    <label
-                      htmlFor="email"
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      Your email
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      id="email"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                      placeholder="name@company.com"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="password"
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      Your password
-                    </label>
-                    <input
-                      type="password"
-                      name="password"
-                      id="password"
-                      placeholder="••••••••"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                      required
-                    />
-                  </div>
-                  <div className="flex justify-between">
-                    <div className="flex items-start">
-                      <div className="flex items-center h-5">
-                        <input
-                          id="remember"
-                          type="checkbox"
-                          value=""
-                          className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
-                          required
-                        />
-                      </div>
-                      <label
-                        htmlFor="remember"
-                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                      >
-                        Remember me
-                      </label>
-                    </div>
-                    <a
-                      href="#"
-                      className="text-sm text-blue-700 hover:underline dark:text-blue-500"
-                    >
-                      Lost Password?
-                    </a>
-                  </div>
-                  <button
-                    type="submit"
-                    className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                  >
-                    Login to your account
-                  </button>
-                  <div className="text-sm font-medium text-gray-500 dark:text-gray-300">
-                    Not registered?{" "}
-                    <a
-                      href="#"
-                      className="text-blue-700 hover:underline dark:text-blue-500"
-                    >
-                      Create account
-                    </a>
-                  </div>
-                </form>
+              <div>
+                <label
+                  htmlFor="amount"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  Amount
+                </label>
+                <input
+                  type="number"
+                  id="amount"
+                  name="amount"
+                  className="block w-full p-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
+                  onChange={formik.handleChange}
+                  value={formik.values.amount}
+                />
               </div>
-            </div>
+
+              <div>
+                <label
+                  htmlFor="reason"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  Reason
+                </label>
+                <select
+                  id="reason"
+                  name="reason"
+                  className="block w-full p-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
+                  onChange={(e) => {
+                    handleReasonChange(e.target.value);
+                    formik.handleChange(e);
+                  }}
+                  value={formik.values.reason}
+                >
+                  <option value="">Select a reason</option>
+                  <option value="Rent">Rent</option>
+                  <option value="Utilities">Utilities</option>
+                  <option value="Groceries">Groceries</option>
+                  <option value="Transportation">Transportation</option>
+                  <option value="Entertainment">Entertainment</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              {showOtherInput && (
+                <div>
+                  <label
+                    htmlFor="otherReason"
+                    className="block mb-2 text-sm font-medium text-gray-900"
+                  >
+                    Other Reason
+                  </label>
+                  <input
+                    type="text"
+                    id="otherReason"
+                    name="otherReason"
+                    className="block w-full p-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
+                    onChange={formik.handleChange}
+                    value={formik.values.otherReason}
+                  />
+                </div>
+              )}
+
+              <button
+                type="submit"
+                className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                disabled={formik.isSubmitting}
+              >
+                Submit
+              </button>
+            </form>
           </div>
         </div>
       </div>

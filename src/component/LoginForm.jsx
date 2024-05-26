@@ -46,6 +46,7 @@ const LoginForm = () => {
         },
       });
       useEffect(()=>{
+        console.log(isLogin);
         if(isLogin){
             navigate("/home")
         }

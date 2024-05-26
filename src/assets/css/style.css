@@ -10,7 +10,7 @@
 }
 .Home-main{
     display: flex;  
-    height: 93vh;
+    height: 90vh;
     justify-content: space-around;
     align-items: center;
 }
@@ -40,7 +40,6 @@
     position: fixed;
     height: 50vh;
     width: 30%;
-    background-color: rgb(250, 235, 215);
-    top: 25%;
-    left: 36%;
+    top: 20%;
+    left: 35%;
 }

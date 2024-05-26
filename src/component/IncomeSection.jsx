@@ -13,7 +13,7 @@ const IncomeSection = () => {
   const incomeData = useSelector((state) => state.transaction.income);
   return (
     <>
-      <div className="income">
+      <div className="income bg-blue-50 p-6 rounded-lg shadow-md">
         {incomeData.length > 0 ? (
           <Line
             data={{
