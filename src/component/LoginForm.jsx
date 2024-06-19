@@ -36,7 +36,7 @@ const LoginForm = () => {
                   localStorage.setItem(`${values.username}Transaction`,JSON.stringify({transactions:[],income:[],expense:[]}))
                   localStorage.setItem(`${values.username}Wallet`,JSON.stringify(0));
                 }
-                localStorage.setItem("logStatus","true")
+                localStorage.setItem("logStatus",JSON.stringify({logStatus:true,username:values.username}))
                 dispatch(loggedIn());
                 navigate("/home")
             }

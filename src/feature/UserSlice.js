@@ -2,7 +2,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const details = {
-  name:""
+  name:(JSON.parse(localStorage.getItem("logStatus"))).username
 }
 
 export const UserSlice = createSlice({
