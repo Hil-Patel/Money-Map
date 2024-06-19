@@ -37,25 +37,25 @@ const NavOption = () => {
       <div className="hidden w-full md:block md:w-auto mr-10" id="navbar-solid-bg">
         <ul className="flex flex-col font-medium mt-4 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-transparent ">
           <li>
-            <NavLink to={"/"}>
               <div
                 className="block py-2 px-3 md:p-0 text-black bg-blue-200 rounded md:bg-transparent md:text-black "
                 aria-current="page"
               >
+            <NavLink to={"/"}>
                 Login
-              </div>
             </NavLink>
+              </div>
           </li>
 
           <li>
-            <NavLink to={"/SignUp"}>
               <div
                 className="block py-2 px-3 md:p-0 text-black bg-blue-200 rounded md:bg-transparent md:text-black "
                 aria-current="page"
               >
+            <NavLink to={"/SignUp"}>
                 SignUp
-              </div>
             </NavLink>
+              </div>
           </li>
         </ul>
       </div>
