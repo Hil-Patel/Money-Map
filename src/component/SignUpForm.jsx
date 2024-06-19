@@ -133,7 +133,7 @@ const SignUpForm = () => {
             </div>
           </div>
           <div className="flex-1 bg-indigo-100 text-center hidden lg:flex">
-            <img src={loginImage} className="log-img" />
+            <img src={loginImage} className="log-img w-full" />
           </div>
         </div>
       </div>

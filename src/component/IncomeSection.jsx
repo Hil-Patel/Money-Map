@@ -27,10 +27,9 @@ const IncomeSection = () => {
   const handleReasonChange = (value) => {
     setShowOtherInput(value === "Other");
   };
-
   const formik = useFormik({
     initialValues: {
-      date: "",
+      date:new Date().toISOString().split("T")[0],
       amount: "",
       reason: "",
       otherReason: "",
@@ -39,7 +38,7 @@ const IncomeSection = () => {
       let payload={}
       if (values.otherReason==="") {
         payload={
-          action:"expense",
+          action:"income",
           date: values.date,
           amount: values.amount,
           reason: values.reason
@@ -47,26 +46,18 @@ const IncomeSection = () => {
       }
       else{
         payload={
-          action:"expense",
+          action:"income",
           date: values.date,
           amount: values.amount,
           reason: values.otherReason
         }
       }
-      console.log(payload)
       handleClick()
       dispatch(addIncome(payload))
     },
   });
 
-  useEffect(()=>{
-    
-    localStorage.setItem(`${username}Transaction`,JSON.stringify(transaction))
-  },[transaction])
   
-  useEffect(()=>{
-    localStorage.setItem(`${username}Wallet`,JSON.stringify(wallet))
-  },[wallet])
 
   return (
     <>
@@ -74,11 +65,11 @@ const IncomeSection = () => {
         {incomeData.length > 0 ? (
           <Line
             data={{
-              labels: incomeData.map((val) => val),
+              labels: incomeData.map((val) => val.date),
               datasets: [
                 {
-                  label: "revenue",
-                  data: [1, 2],
+                  label: "Income",
+                  data: incomeData.map((val) => val.amount),
                   backgroundColor: "rgba(62, 169, 60, .8)",
                   borderColor: "rgba(62, 169, 60, 1)",
                 },
@@ -96,7 +87,7 @@ const IncomeSection = () => {
           type="button"
           onClick={handleClick}
         >
-          Add Expense
+          Add Income
         </button>
 
         <div
@@ -188,11 +179,10 @@ const IncomeSection = () => {
                   value={formik.values.reason}
                 >
                   <option value="">Select a reason</option>
-                  <option value="Rent">Rent</option>
-                  <option value="Utilities">Utilities</option>
-                  <option value="Groceries">Groceries</option>
-                  <option value="Transportation">Transportation</option>
-                  <option value="Entertainment">Entertainment</option>
+                  <option value="Salary">Salary</option>
+                  <option value="Tution">Tution</option>
+                  <option value="Bussiness">Bussiness</option>
+                  <option value="Trading">Trading</option>
                   <option value="Other">Other</option>
                 </select>
               </div>

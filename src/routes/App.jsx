@@ -6,6 +6,7 @@ import { createBrowserRouter,RouterProvider } from 'react-router-dom'
 import Login from '../pages/Login'
 import SignUp from '../pages/SignUp'
 import Home from '../pages/Home'
+import Transaction from '../pages/Transaction'
 
 function App() {
   const router=createBrowserRouter([
@@ -19,7 +20,7 @@ function App() {
     },
     {
       path:'/history',
-      element:<h1>history</h1>
+      element:<Transaction/>
     },
     {
       path:'/home',

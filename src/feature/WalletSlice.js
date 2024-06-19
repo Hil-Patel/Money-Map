@@ -4,24 +4,35 @@ import { createSlice } from "@reduxjs/toolkit";
 import {addIncome as moneyAdded,addExpense as moneyUsed} from "./TransactionSlice";
 
 const wallet={
-    balance:0
+  balance:0
 }
-
+// const setData = () => {
+//   if (Name!=="" ) {
+//       localStorage.setItem( `${ Name }wallet`, JSON.stringify( wallet.balance ) );
+//   }
+// }
 export const WalletSlice = createSlice({
-    name:"Wallet",
+  name:"Wallet",
     initialState:wallet,
     reducers:{  
         setAmount:(state,action)=>{
-            console.log(action.payload)
-            state.balance=action.payload;
+          const Name = JSON.parse( localStorage.getItem( "logStatus" ) )?.username;
+          state.balance = action.payload;
+          localStorage.setItem(`${Name}wallet`,JSON.stringify(state.balance))
         }
-    },
-    extraReducers: (builder) => {
+      },
+      extraReducers: (builder) => {
         builder.addCase(moneyAdded, (state, action) => {
-          state.balance += action.payload.amount;
-        });
-        builder.addCase(moneyUsed, (state, action) => {
-          state.balance -= action.payload.amount;
+        const Name = JSON.parse( localStorage.getItem( "logStatus" ) )?.username;
+        state.balance += action.payload.amount;
+        localStorage.setItem(`${Name}wallet`,JSON.stringify(state.balance))
+        
+      });
+      builder.addCase(moneyUsed, (state, action) => {
+        const Name = JSON.parse( localStorage.getItem( "logStatus" ) )?.username;
+        state.balance -= action.payload.amount;
+        localStorage.setItem(`${Name}wallet`,JSON.stringify(state.balance))
+          
         });
       }
 })

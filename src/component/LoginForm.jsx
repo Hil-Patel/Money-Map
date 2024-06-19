@@ -27,16 +27,8 @@ const LoginForm = () => {
         onSubmit: (values) => {
             const storedpassword=CryptoJS.AES.decrypt(JSON.parse(localStorage.getItem(values.username)).password,"secret!3#%@").toString(CryptoJS.enc.Utf8);
             if(storedpassword===values.password){
+              localStorage.setItem("logStatus",JSON.stringify({logStatus:true,username:values.username}))
                 dispatch(UserloggedIn(values.username));
-                if(localStorage.getItem(`${values.username}Transaction`)){
-                  dispatch(setTransaction(JSON.parse(localStorage.getItem(`${values.username}Transaction`))));
-                  dispatch(setAmount(JSON.parse(localStorage.getItem(`${values.username}Wallet`))))
-                }
-                else{
-                  localStorage.setItem(`${values.username}Transaction`,JSON.stringify({transactions:[],income:[],expense:[]}))
-                  localStorage.setItem(`${values.username}Wallet`,JSON.stringify(0));
-                }
-                localStorage.setItem("logStatus",JSON.stringify({logStatus:true,username:values.username}))
                 dispatch(loggedIn());
                 navigate("/home")
             }
@@ -46,12 +38,13 @@ const LoginForm = () => {
         },
       });
       useEffect(()=>{
-        console.log(isLogin);
-        if(isLogin){
-            navigate("/home")
-        }
+        // console.log(JSON.parse(localStorage.getItem("logStatus")).logStatus);
         if(!localStorage.getItem("logStatus")){
-          localStorage.setItem("logStatus","false")
+          localStorage.setItem("logStatus",JSON.stringify({logStatus:false,username:""}))
+        }
+        if ( JSON.parse( localStorage.getItem( "logStatus" ) ).logStatus ){
+          dispatch(loggedIn())
+          navigate("/home")
         }
       })
   return (
@@ -105,7 +98,7 @@ const LoginForm = () => {
           <div className="flex-1 bg-indigo-100 text-center hidden lg:flex">
             <img
               src={loginImage}
-              className="log-img"
+              className="log-img w-full"
             />
           </div>
         </div>

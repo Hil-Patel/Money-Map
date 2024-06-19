@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import { useDispatch, useSelector } from "react-redux";
@@ -29,7 +30,7 @@ const ExpenseSection = () => {
 
   const formik = useFormik({
     initialValues: {
-      date: "",
+      date: new Date().toISOString().split("T")[0],
       amount: "",
       reason: "",
       otherReason: "",
@@ -52,20 +53,16 @@ const ExpenseSection = () => {
           reason: values.otherReason
         }
       }
-      console.log(payload)
-      handleClick();
-      dispatch(addExpense(payload))
+      if ( wallet - values.amount < 0 ){
+        alert("Not enough balance")
+      }
+      else{
+        handleClick();
+        dispatch(addExpense(payload))
+      }
     },
   });
 
-  useEffect(()=>{
-    
-    localStorage.setItem(`${username}Transaction`,JSON.stringify(transaction))
-  },[transaction])
-  
-  useEffect(()=>{
-    localStorage.setItem(`${username}Wallet`,JSON.stringify(wallet))
-  },[wallet])
 
   return (
     <>
@@ -73,13 +70,13 @@ const ExpenseSection = () => {
         {expenseData.length > 0 ? (
           <Line
             data={{
-              labels: ["a", "a"],
+              labels:expenseData.map((val)=>val.date),
               datasets: [
                 {
-                  label: "revenue",
-                  data: [1, 2],
-                  backgroundColor: "rgba(62, 169, 60, .8)",
-                  borderColor: "rgba(62, 169, 60, 1)",
+                  label: "Expense",
+                  data: expenseData.map((val)=>val.amount),
+                  backgroundColor: "rgba(255, 47, 0, .8)",
+                  borderColor: "rgba(255, 47, 0, 1)",
                 },
               ],
             }}

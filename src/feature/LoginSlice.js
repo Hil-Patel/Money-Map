@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const LoginStatus = {
-  status:JSON.parse(localStorage.getItem("logStatus")),
+  status: (JSON.parse(localStorage.getItem("logStatus")))?.logStatus,
 }
 
 export const LoginSlice = createSlice({
@@ -9,10 +9,10 @@ export const LoginSlice = createSlice({
   initialState:LoginStatus,
   reducers: {
     loggedIn:(state)=>{
-        state.status = true;
+      state.status = true;
     },
     loggedOut:(state)=>{
-        state.status = false;
+      state.status = false;
     }
   },
 })

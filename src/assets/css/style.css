@@ -1,11 +1,14 @@
 .login-form{
     height: 93vh;
 }
+.log-img{
+    object-fit: cover;
+}
 .log-detail{
     display: flex;
     align-items: center;
 }
-.active>div{
+.active{
     color: blue;
 }
 .Home-main{

@@ -3,13 +3,21 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loggedOut } from "../feature/LoginSlice";
+import { UserloggedOut } from "../feature/UserSlice";
+import { setTransaction } from "../feature/TransactionSlice";
 
 const Wallet = () => {
   const dispatch=useDispatch()
   const amount=useSelector((state)=>state.Wallet.balance)
   const changeLogStatus=()=>{
-    localStorage.setItem("logStatus","false");
-    dispatch(loggedOut());
+    localStorage.setItem("logStatus",JSON.stringify({logStatus:false,username:""}));
+    dispatch( loggedOut() );
+    dispatch( UserloggedOut() )
+    dispatch(setTransaction({
+      transactions:[],
+      income:[],
+      expense:[]
+  }))
   }
   return (
     <>
@@ -21,14 +29,17 @@ const Wallet = () => {
         </div>
         <div className="flex">
           
-      <NavLink to={"/history"}>
       <div
           className="mr-10 text-lg py-2 font-medium md:space-x-8 px-3 md:p-0 text-blue-900 bg-blue-700 rounded md:bg-transparent md:text-black "
           aria-current="page"
-          >
+        >
+          <NavLink to={"/home"}>
+            Home
+          </NavLink>
+      <NavLink to={"/history"}>
           Transaction
-        </div>
         </NavLink>
+        </div>
         <NavLink to={"/"}>
 
         <div
