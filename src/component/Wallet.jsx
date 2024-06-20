@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { loggedOut } from "../feature/LoginSlice";
 import { UserloggedOut } from "../feature/UserSlice";
 import { setTransaction } from "../feature/TransactionSlice";
+import { setAmount } from "../feature/WalletSlice";
 
 const Wallet = () => {
   const dispatch=useDispatch()
@@ -13,6 +14,7 @@ const Wallet = () => {
     localStorage.setItem("logStatus",JSON.stringify({logStatus:false,username:""}));
     dispatch( loggedOut() );
     dispatch( UserloggedOut() )
+    dispatch(setAmount(0))
     dispatch(setTransaction({
       transactions:[],
       income:[],

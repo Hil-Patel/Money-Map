@@ -16,9 +16,7 @@ export const WalletSlice = createSlice({
     initialState:wallet,
     reducers:{  
         setAmount:(state,action)=>{
-          const Name = JSON.parse( localStorage.getItem( "logStatus" ) )?.username;
           state.balance = action.payload;
-          localStorage.setItem(`${Name}wallet`,JSON.stringify(state.balance))
         }
       },
       extraReducers: (builder) => {

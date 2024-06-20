@@ -1,10 +1,11 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Line } from "react-chartjs-2";
 import { useDispatch, useSelector } from "react-redux";
 import { Chart as ChartJS, defaults } from "chart.js/auto";
-import { useFormik } from "formik"; // Importing useFormik hook
-import {addExpense} from "../feature/TransactionSlice"
+import { useFormik } from "formik";
+import { addExpense } from "../feature/TransactionSlice";
+import { ExpenseSchema } from "../schema/Transaction";
 
 defaults.plugins.title.display = true;
 defaults.plugins.title.align = "start";
@@ -13,11 +14,11 @@ defaults.plugins.title.color = "black";
 
 const ExpenseSection = () => {
   const expenseData = useSelector((state) => state.transaction.expense);
-  const username=useSelector((state)=>state.user.name);
-  const wallet=useSelector((state)=>state.Wallet.balance);
-  const transaction=useSelector((state)=>state.transaction)
+  const username = useSelector((state) => state.user.name);
+  const wallet = useSelector((state) => state.Wallet.balance);
+  const transaction = useSelector((state) => state.transaction);
   const [showOtherInput, setShowOtherInput] = useState(false);
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
 
   const handleClick = () => {
     document.getElementById("authentication-modal").classList.toggle("hidden");
@@ -26,6 +27,10 @@ const ExpenseSection = () => {
 
   const handleReasonChange = (value) => {
     setShowOtherInput(value === "Other");
+    formik.setFieldValue("reason", value); // set the value of reason field
+    if (value !== "Other") {
+      formik.setFieldValue("otherReason", ""); // clear otherReason field if reason is not "Other"
+    }
   };
 
   const formik = useFormik({
@@ -35,34 +40,36 @@ const ExpenseSection = () => {
       reason: "",
       otherReason: "",
     },
-    onSubmit:(values)=>{
-      let payload={}
-      if (values.otherReason==="") {
-        payload={
-          action:"expense",
-          date: values.date,
-          amount: values.amount,
-          reason: values.reason
+    validationSchema: ExpenseSchema,
+    onSubmit: (values) => {
+      if (values.reason === "Other" && values.otherReason === "") {
+        alert("Reason is required");
+      } else {
+        let payload = {};
+        if (values.otherReason === "") {
+          payload = {
+            action: "expense",
+            date: values.date,
+            amount: values.amount,
+            reason: values.reason,
+          };
+        } else {
+          payload = {
+            action: "expense",
+            date: values.date,
+            amount: values.amount,
+            reason: values.otherReason,
+          };
         }
-      }
-      else{
-        payload={
-          action:"expense",
-          date: values.date,
-          amount: values.amount,
-          reason: values.otherReason
+        if (wallet - values.amount < 0) {
+          alert("Not enough balance");
+        } else {
+          handleClick();
+          dispatch(addExpense(payload));
         }
-      }
-      if ( wallet - values.amount < 0 ){
-        alert("Not enough balance")
-      }
-      else{
-        handleClick();
-        dispatch(addExpense(payload))
       }
     },
   });
-
 
   return (
     <>
@@ -70,11 +77,11 @@ const ExpenseSection = () => {
         {expenseData.length > 0 ? (
           <Line
             data={{
-              labels:expenseData.map((val)=>val.date),
+              labels: expenseData.map((val) => val.date),
               datasets: [
                 {
                   label: "Expense",
-                  data: expenseData.map((val)=>val.amount),
+                  data: expenseData.map((val) => val.amount),
                   backgroundColor: "rgba(255, 47, 0, .8)",
                   borderColor: "rgba(255, 47, 0, 1)",
                 },
@@ -145,8 +152,12 @@ const ExpenseSection = () => {
                   name="date"
                   className="block w-full p-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
                   onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   value={formik.values.date}
                 />
+                {formik.touched.date && formik.errors.date && (
+                  <p className="text-red-600">{formik.errors.date}</p>
+                )}
               </div>
 
               <div>
@@ -162,8 +173,12 @@ const ExpenseSection = () => {
                   name="amount"
                   className="block w-full p-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
                   onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   value={formik.values.amount}
                 />
+                {formik.touched.amount && formik.errors.amount && (
+                  <p className="text-red-600">{formik.errors.amount}</p>
+                )}
               </div>
 
               <div>
@@ -180,8 +195,10 @@ const ExpenseSection = () => {
                   onChange={(e) => {
                     handleReasonChange(e.target.value);
                     formik.handleChange(e);
+                    formik.setFieldTouched("reason", true); // Mark as touched
                   }}
                   value={formik.values.reason}
+                  onBlur={formik.handleBlur}
                 >
                   <option value="">Select a reason</option>
                   <option value="Rent">Rent</option>
@@ -191,6 +208,9 @@ const ExpenseSection = () => {
                   <option value="Entertainment">Entertainment</option>
                   <option value="Other">Other</option>
                 </select>
+                {formik.touched.reason && formik.errors.reason && (
+                  <p className="text-red-600">{formik.errors.reason}</p>
+                )}
               </div>
 
               {showOtherInput && (
@@ -207,15 +227,19 @@ const ExpenseSection = () => {
                     name="otherReason"
                     className="block w-full p-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
                     onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
                     value={formik.values.otherReason}
                   />
+                  {console.log(formik.errors.otherReason)}
+                  {formik.touched.otherReason && formik.errors.otherReason && (
+                    <p className="text-red-600">{formik.errors.otherReason}</p>
+                  )}
                 </div>
               )}
 
               <button
                 type="submit"
                 className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                
               >
                 Submit
               </button>
