@@ -8,8 +8,6 @@ import { NavLink ,useNavigate} from "react-router-dom";
 import { useSelector ,useDispatch} from "react-redux";
 import { loggedIn ,loggedOut} from "../feature/LoginSlice";
 import {UserloggedIn} from "../feature/UserSlice"
-import { setTransaction } from "../feature/TransactionSlice";
-import { setAmount } from "../feature/WalletSlice";
 import CryptoJS from "crypto-js";
 
 
@@ -25,6 +23,9 @@ const LoginForm = () => {
         },
         validationSchema: LoginSchema,
         onSubmit: (values) => {
+          console.log(values.username);
+          try {
+            
             const storedpassword=CryptoJS.AES.decrypt(JSON.parse(localStorage.getItem(values.username)).password,"secret!3#%@").toString(CryptoJS.enc.Utf8);
             if(storedpassword===values.password){
               localStorage.setItem("logStatus",JSON.stringify({logStatus:true,username:values.username}))
@@ -33,12 +34,16 @@ const LoginForm = () => {
                 navigate("/home")
             }
             else{
-                alert("Invalid Credentials")
+                alert("Invalid password")
             }
+          } 
+          catch (error) {
+            alert("invalid username")
+          }
+            
         },
       });
       useEffect(()=>{
-        // console.log(JSON.parse(localStorage.getItem("logStatus")).logStatus);
         if(!localStorage.getItem("logStatus")){
           localStorage.setItem("logStatus",JSON.stringify({logStatus:false,username:""}))
         }
